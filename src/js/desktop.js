@@ -124,17 +124,17 @@ jQuery.noConflict();
                     // }
                     let timeout = setTimeout(async () => {
                         e.preventDefault();
-                        for (let count of fieldIdIso) {
-                            // console.log(count);
-                            // console.log(fieldIdIso[count].fieldID);
-                            // console.log(fieldIdIso[count].fieldISO);
-                            // console.log("TEST",fieldSelector);
-                            if (count.fieldID === fieldSelector) {
-                                console.log("ແປແລ້ວ");
-                            } else {
-                                console.log("ບໍ່ແປ");
-                            }
-                        }
+                        // for (let count of fieldIdIso) {
+                        //     // console.log(count);
+                        //     // console.log(fieldIdIso[count].fieldID);
+                        //     // console.log(fieldIdIso[count].fieldISO);
+                        //     // console.log("TEST",fieldSelector);
+                        //     if (count.fieldID === fieldSelector) {
+                        //         console.log("ແປແລ້ວ");
+                        //     } else {
+                        //         console.log("ບໍ່ແປ");
+                        //     }
+                        // }
                         const oldContextMenu = $('#custom-context-menu');
                         if (oldContextMenu.length) {
                             oldContextMenu.remove();
