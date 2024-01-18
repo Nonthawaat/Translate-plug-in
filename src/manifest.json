@@ -1,0 +1,49 @@
+{
+  "manifest_version": 1,
+  "version": 1,
+  "type": "APP",
+  "desktop": {
+    "js": [
+			"js/jquery-2.2.4.min.js",
+			"js/sweetalert2.all.js",
+			"https://unpkg.com/kintone-ui-component/umd/kuc.min.js",
+      "https://cdn.jsdelivr.net/npm/axios@1.6.5/dist/axios.min.js",
+      "js/desktop.js"
+    ],
+    "css": [
+      "css/51-modern-default.css",
+      "css/desktop.css"
+    ]
+  },
+  "icon": "image/icon.png",
+  "config": {
+    "html": "html/config.html",
+    "js": [
+      "https://js.cybozu.com/jquery/3.3.1/jquery.min.js",
+      "js/config.js",
+      "js/sweetalert2.all.js"
+    ],
+    "css": [
+      "css/51-modern-default.css",
+      "css/config.css"
+    ],
+    "required_params": [
+
+    ]
+  },
+  "name": {
+    "en": "Translate-plug-in"
+  },
+  "description": {
+    "en": "Translate-plug-in"
+  },
+  "mobile": {
+    "js": [
+      "https://js.cybozu.com/jquery/3.3.1/jquery.min.js",
+      "js/mobile.js"
+    ],
+    "css": [
+      "css/mobile.css"
+    ]
+  }
+}
