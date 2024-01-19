@@ -61,6 +61,13 @@ jQuery.noConflict();
                     fieldCode: "TEXTPFIELD_2",
                     fieldName: "TEXTPFIELD_2",
                 }
+            },
+            {
+                itemCode: "ITEM_5",
+                targetFields: {
+                    fieldCode: "TEXTPFIELD_3",
+                    fieldName: "TEXTPFIELD_3",
+                }
             }
         ]
     }
@@ -100,109 +107,177 @@ jQuery.noConflict();
         // console.log(record);
         const schema_data = cybozu.data.page.SCHEMA_DATA;
         // console.log(schema_data);
-        let isoTranslated = "";
-        let fieldIdIso = [];
-        let fieldtranslated = "";
         for await (let item of TRANSLATEFFIELDS) {
-            // console.log(item);
-            let fieldEl = item.targetFields;
-            // console.log(fieldEl);
+            let fieldIdIso = [];
+            let fieldtranslated = "";
             for (let obj = 0; obj < LANGUAGELIST.length; obj++) {
                 // console.log(obj);
+                let fieldEl = item.targetFields;
                 if (!fieldEl.fieldCode || fieldEl.fieldCode == '') continue;
                 let data = getFieldData(schema_data, fieldEl.fieldCode);
                 let fieldSelector = `.field-${data.id}`;
-                // console.log(fieldSelector);
-
                 $(document).on('mouseover', fieldSelector, async function (e) {
-
-                    // console.log("Over");
-                    // if (isoTranslated !== ISO_DEFAULT && isoTranslated !== ""){
-                    //     console.log("ຕ່າງ");
-                    // } else {
-                    //     console.log("ບໍ່ຕ່າງ");
-                    // }
                     let timeout = setTimeout(async () => {
                         e.preventDefault();
-                        // for (let count of fieldIdIso) {
-                        //     // console.log(count);
-                        //     // console.log(fieldIdIso[count].fieldID);
-                        //     // console.log(fieldIdIso[count].fieldISO);
-                        //     // console.log("TEST",fieldSelector);
-                        //     if (count.fieldID === fieldSelector) {
-                        //         console.log("ແປແລ້ວ");
-                        //     } else {
-                        //         console.log("ບໍ່ແປ");
-                        //     }
-                        // }
-                        const oldContextMenu = $('#custom-context-menu');
-                        if (oldContextMenu.length) {
-                            oldContextMenu.remove();
-                        }
+                        if (fieldIdIso.length == 0) {
+                            const oldContextMenu = $('#custom-context-menu');
+                            if (oldContextMenu.length) {
+                                oldContextMenu.remove();
+                            }
 
-                        var customContextMenu = $('<div>').attr('id', 'custom-context-menu')
-                            .css({
-                                position: 'absolute',
-                                background: '#fff',
-                                border: '1px solid #ccc',
-                                boxShadow: '2px 2px 5px rgba(0, 0, 0, 0.1)',
-                                padding: '5px',
-                                left: e.pageX + 'px',
-                                top: e.pageY + 'px'
-                            });
-                        $.each(LANGUAGELIST, function (i, field) {
-                            if (field.languageCode !== ISO_DEFAULT && field.languageCode !== '') {
-                                // console.log(field);
-                                let targetField = fieldEl.fieldCode;
-                                // console.log(targetField);
-                                let srcField = data.var;
-                                // console.log(srcField);
-                                let buttonLabel = "";
-                                buttonLabel += field.buttonLlabel + " ";
-                                // console.log(buttonLabel);
-                                const hoverBtn = new Kuc.Button({
-                                    text: buttonLabel,
-                                    type: 'normal',
-                                    id: targetField
+                            var customContextMenu = $('<div>').attr('id', 'custom-context-menu')
+                                .css({
+                                    position: 'absolute',
+                                    background: '#fff',
+                                    border: '1px solid #ccc',
+                                    boxShadow: '2px 2px 5px rgba(0, 0, 0, 0.1)',
+                                    padding: '5px',
+                                    left: e.pageX + 'px',
+                                    top: e.pageY + 'px'
                                 });
-                                customContextMenu.append(hoverBtn);
-                                $(hoverBtn).on('click', async (e) => {
-                                    // console.log(fieldSelector);
-                                    // console.log(e);
-                                    let fieldType = findPropertyById(record, srcField).type;
-                                    // console.log(fieldType);
-                                    const langClick = field.languageCode;
-                                    // console.log(langClick);
-                                    if (isoTranslated !== "") {
-                                        console.log("if");
-                                        await translateTor(fieldType, langClick, isoTranslated, targetField);
-                                        isoTranslated = "";
-                                        isoTranslated = langClick;
-                                    } else {
-                                        console.log("else");
-                                        isoTranslated = langClick;
+                            $.each(LANGUAGELIST, function (i, field) {
+                                if (field.languageCode !== ISO_DEFAULT && field.languageCode !== '') {
+                                    let targetField = fieldEl.fieldCode;
+                                    let srcField = data.var;
+                                    let buttonLabel = "";
+                                    buttonLabel += field.buttonLlabel + " ";
+                                    const hoverBtn = new Kuc.Button({
+                                        text: buttonLabel,
+                                        type: 'normal',
+                                        id: targetField
+                                    });
+                                    customContextMenu.append(hoverBtn);
+                                    $(hoverBtn).on('click', async (e) => {
+                                        let fieldType = findPropertyById(record, srcField).type;
+                                        let langClick = field.languageCode;
                                         await translateTor(fieldType, langClick, deLang, targetField);
-                                    }
-                                    // isoTranslated = langClick;
-                                    // console.log(isoTranslated);
-                                    // if ()
-                                    fieldtranslated = {
-                                        fieldID: fieldSelector,
-                                        fieldISO: langClick
-                                    }
-                                    fieldIdIso.push(fieldtranslated);
-                                });
-                            }
-                        });
-                        $('body').append(customContextMenu);
-                        $(document).on('click', function (el) {
-                            if (!customContextMenu.is(el.currentTarget) && customContextMenu.has(el.currentTarget).length === 0) {
+                                        fieldtranslated = {
+                                            fieldID: fieldSelector,
+                                            fieldISO: langClick
+                                        }
+                                        fieldIdIso.push(fieldtranslated);
+                                    });
+                                }
+                            });
+                            $('body').append(customContextMenu);
+                            $(document).on('click', function (el) {
+                                if (!customContextMenu.is(el.currentTarget) && customContextMenu.has(el.currentTarget).length === 0) {
+                                    customContextMenu.remove();
+                                }
+                            });
+                            customContextMenu.on('mouseleave', function () {
                                 customContextMenu.remove();
-                            }
-                        });
-                        customContextMenu.on('mouseleave', function () {
-                            customContextMenu.remove();
-                        });
+                            });
+                        } else {
+                            let foundFieldID = "";
+                            fieldIdIso.forEach(count => {
+                                if (fieldSelector === count.fieldID) {
+                                    foundFieldID = count;
+                                    const oldContextMenu = $('#custom-context-menu');
+                                    if (oldContextMenu.length) {
+                                        oldContextMenu.remove();
+                                    }
+
+                                    var customContextMenu = $('<div>').attr('id', 'custom-context-menu')
+                                        .css({
+                                            position: 'absolute',
+                                            background: '#fff',
+                                            border: '1px solid #ccc',
+                                            boxShadow: '2px 2px 5px rgba(0, 0, 0, 0.1)',
+                                            padding: '5px',
+                                            left: e.pageX + 'px',
+                                            top: e.pageY + 'px'
+                                        });
+                                    $.each(LANGUAGELIST, function (i, field) {
+                                        if (field.languageCode !== count.fieldISO && field.languageCode !== '') {
+                                            let targetField = fieldEl.fieldCode;
+                                            let srcField = data.var;
+                                            let buttonLabel = "";
+                                            buttonLabel += field.buttonLlabel + " ";
+                                            const hoverBtn = new Kuc.Button({
+                                                text: buttonLabel,
+                                                type: 'normal',
+                                                id: targetField
+                                            });
+                                            customContextMenu.append(hoverBtn);
+                                            $(hoverBtn).on('click', async (e) => {
+                                                let fieldType = findPropertyById(record, srcField).type;
+                                                const langClick = field.languageCode;
+                                                let isoSelete = count.fieldISO;
+                                                await translateTor(fieldType, langClick, isoSelete, targetField);
+                                                fieldtranslated = {
+                                                    fieldID: fieldSelector,
+                                                    fieldISO: langClick
+                                                }
+                                                fieldIdIso.push(fieldtranslated);
+                                                console.log(fieldIdIso);
+                                            });
+                                        }
+                                    });
+                                    $('body').append(customContextMenu);
+                                    $(document).on('click', function (el) {
+                                        if (!customContextMenu.is(el.currentTarget) && customContextMenu.has(el.currentTarget).length === 0) {
+                                            customContextMenu.remove();
+                                        }
+                                    });
+                                    customContextMenu.on('mouseleave', function () {
+                                        customContextMenu.remove();
+                                    });
+                                    return;
+                                } else {
+                                    console.log("ບໍ່ແປ");
+                                    const oldContextMenu = $('#custom-context-menu');
+                                    if (oldContextMenu.length) {
+                                        oldContextMenu.remove();
+                                    }
+
+                                    var customContextMenu = $('<div>').attr('id', 'custom-context-menu')
+                                        .css({
+                                            position: 'absolute',
+                                            background: '#fff',
+                                            border: '1px solid #ccc',
+                                            boxShadow: '2px 2px 5px rgba(0, 0, 0, 0.1)',
+                                            padding: '5px',
+                                            left: e.pageX + 'px',
+                                            top: e.pageY + 'px'
+                                        });
+                                    $.each(LANGUAGELIST, function (i, field) {
+                                        if (field.languageCode !== ISO_DEFAULT && field.languageCode !== '') {
+                                            let targetField = fieldEl.fieldCode;
+                                            let srcField = data.var;
+                                            let buttonLabel = "";
+                                            buttonLabel += field.buttonLlabel + " ";
+                                            const hoverBtn = new Kuc.Button({
+                                                text: buttonLabel,
+                                                type: 'normal',
+                                                id: targetField
+                                            });
+                                            customContextMenu.append(hoverBtn);
+                                            $(hoverBtn).on('click', async (e) => {
+                                                let fieldType = findPropertyById(record, srcField).type;
+                                                const langClick = field.languageCode;
+                                                await translateTor(fieldType, langClick, deLang, targetField);
+                                                fieldtranslated = {
+                                                    fieldID: fieldSelector,
+                                                    fieldISO: langClick
+                                                }
+                                                fieldIdIso.push(fieldtranslated);
+                                            });
+                                        }
+                                    });
+                                    $('body').append(customContextMenu);
+                                    $(document).on('click', function (el) {
+                                        if (!customContextMenu.is(el.currentTarget) && customContextMenu.has(el.currentTarget).length === 0) {
+                                            customContextMenu.remove();
+                                        }
+                                    });
+                                    customContextMenu.on('mouseleave', function () {
+                                        customContextMenu.remove();
+                                    });
+                                }
+                            });
+                            console.log(foundFieldID);
+                        }
 
                     }, 400);
                     $(this).on('mouseout', function () {
@@ -216,22 +291,13 @@ jQuery.noConflict();
             let resp = kintone.app.record.get();
             let respText = '';
             let textTotl = resp.record[targetField].value;
-            // console.log(fieldType);
-            // console.log(textTotl);
-            // console.log(deLang);
-            // console.log(langClick);
-            // console.log(srcField);
-            // console.log(targetField);
-
             if (targetField) {
                 respText = await translateText(fieldType, textTotl || '', langClick, deLang);
-                // check if error
                 if (typeof respText === 'object') {
                     return respText;
                 }
                 resp.record[targetField].value = respText;
                 kintone.app.record.set(resp);
-                // console.log(respText);
             }
         }
 
@@ -242,7 +308,6 @@ jQuery.noConflict();
                 tranText = myMemoryApi(textTotl, deLang, langClick);
             }
             else if (fieldType === "MULTI_LINE_TEXT") {
-
             }
             else if (fieldType === "RICH_TEXT") {
 
@@ -251,21 +316,14 @@ jQuery.noConflict();
         }
 
         async function myMemoryApi(textTotl, deLang, langClick) {
-            // console.log(textTotl);
-            // console.log(deLang);
-            // console.log(langClick);
             let trans = await axios({ method: 'GET', url: `https://api.mymemory.translated.net/get?q=${textTotl}&langpair=${deLang}|${langClick}` }).catch((err) => {
                 throw new Error("Translate Error");
             });
             if (trans.status === 200) {
                 let txt = trans.data.responseData.translatedText;
-                // Calculate the leading and trailing spaces to restore
                 var leadingSpaces = textTotl.match(/^\s*/)[0];
                 var trailingSpaces = textTotl.match(/\s*$/)[0];
-
-                // Return the translated text with the preserved spaces
                 return leadingSpaces + txt + trailingSpaces;
-                // return txt;
             } else {
                 throw new Error(
                     'Translation request failed with status: ' +
