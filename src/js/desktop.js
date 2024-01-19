@@ -139,156 +139,13 @@ jQuery.noConflict();
                     let timeout = setTimeout(async () => {
                         e.preventDefault();
                         if (fieldIdIso.length == 0) {
-                            const oldContextMenu = $('#custom-context-menu');
-                            if (oldContextMenu.length) {
-                                oldContextMenu.remove();
-                            }
-                            var customContextMenu = $('<div>').attr('id', 'custom-context-menu')
-                                .css({
-                                    position: 'absolute',
-                                    background: '#fff',
-                                    border: '1px solid #ccc',
-                                    boxShadow: '2px 2px 5px rgba(0, 0, 0, 0.1)',
-                                    padding: '5px',
-                                    left: e.pageX + 'px',
-                                    top: e.pageY + 'px'
-                                });
-                            $.each(LANGUAGELIST, function (i, field) {
-                                if (field.languageCode !== ISO_DEFAULT && field.languageCode !== '') {
-                                    let targetField = fieldEl.fieldCode;
-                                    let srcField = data.var;
-                                    let buttonLabel = "";
-                                    buttonLabel += field.buttonLlabel + " ";
-                                    const hoverBtn = new Kuc.Button({
-                                        text: buttonLabel,
-                                        type: 'normal',
-                                        id: targetField
-                                    });
-                                    customContextMenu.append(hoverBtn);
-                                    $(hoverBtn).on('click', async (e) => {
-                                        let fieldType = findPropertyById(record, srcField).type;
-                                        let langClick = field.languageCode;
-                                        await translateTor(fieldType, langClick, deLang, targetField);
-                                        fieldtranslated = {
-                                            fieldID: fieldSelector,
-                                            fieldISO: langClick
-                                        }
-                                        fieldIdIso.push(fieldtranslated);
-                                    });
-                                }
-                            });
-                            $('body').append(customContextMenu);
-                            $(document).on('click', function (el) {
-                                if (!customContextMenu.is(el.currentTarget) && customContextMenu.has(el.currentTarget).length === 0) {
-                                    customContextMenu.remove();
-                                }
-                            });
-                            customContextMenu.on('mouseleave', function () {
-                                customContextMenu.remove();
-                            });
+                            createButtonISO(fieldEl, data, deLang, e);
                         } else {
-                            fieldIdIso.forEach(count => {
-                                if (fieldSelector === count.fieldID) {
-                                    const oldContextMenu = $('#custom-context-menu');
-                                    if (oldContextMenu.length) {
-                                        oldContextMenu.remove();
-                                    }
-
-                                    var customContextMenu = $('<div>').attr('id', 'custom-context-menu')
-                                        .css({
-                                            position: 'absolute',
-                                            background: '#fff',
-                                            border: '1px solid #ccc',
-                                            boxShadow: '2px 2px 5px rgba(0, 0, 0, 0.1)',
-                                            padding: '5px',
-                                            left: e.pageX + 'px',
-                                            top: e.pageY + 'px'
-                                        });
-                                    $.each(LANGUAGELIST, function (i, field) {
-                                        if (field.languageCode !== count.fieldISO && field.languageCode !== '') {
-                                            let targetField = fieldEl.fieldCode;
-                                            let srcField = data.var;
-                                            let buttonLabel = "";
-                                            buttonLabel += field.buttonLlabel + " ";
-                                            const hoverBtn = new Kuc.Button({
-                                                text: buttonLabel,
-                                                type: 'normal',
-                                                id: targetField
-                                            });
-                                            customContextMenu.append(hoverBtn);
-                                            $(hoverBtn).on('click', async (e) => {
-                                                let fieldType = findPropertyById(record, srcField).type;
-                                                const langClick = field.languageCode;
-                                                let isoSelete = count.fieldISO;
-                                                await translateTor(fieldType, langClick, isoSelete, targetField);
-                                                fieldtranslated = {
-                                                    fieldID: fieldSelector,
-                                                    fieldISO: langClick
-                                                }
-                                                fieldIdIso.push(fieldtranslated);
-                                            });
-                                        }
-                                    });
-                                    $('body').append(customContextMenu);
-                                    $(document).on('click', function (el) {
-                                        if (!customContextMenu.is(el.currentTarget) && customContextMenu.has(el.currentTarget).length === 0) {
-                                            customContextMenu.remove();
-                                        }
-                                    });
-                                    customContextMenu.on('mouseleave', function () {
-                                        customContextMenu.remove();
-                                    });
-                                    return;
+                            fieldIdIso.forEach(item => {
+                                if (fieldSelector === item.fieldID) {
+                                    createButtonTranslated(fieldEl, data, e, item, fieldSelector);
                                 } else {
-                                    console.log("ບໍ່ແປ");
-                                    const oldContextMenu = $('#custom-context-menu');
-                                    if (oldContextMenu.length) {
-                                        oldContextMenu.remove();
-                                    }
-
-                                    var customContextMenu = $('<div>').attr('id', 'custom-context-menu')
-                                        .css({
-                                            position: 'absolute',
-                                            background: '#fff',
-                                            border: '1px solid #ccc',
-                                            boxShadow: '2px 2px 5px rgba(0, 0, 0, 0.1)',
-                                            padding: '5px',
-                                            left: e.pageX + 'px',
-                                            top: e.pageY + 'px'
-                                        });
-                                    $.each(LANGUAGELIST, function (i, field) {
-                                        if (field.languageCode !== ISO_DEFAULT && field.languageCode !== '') {
-                                            let targetField = fieldEl.fieldCode;
-                                            let srcField = data.var;
-                                            let buttonLabel = "";
-                                            buttonLabel += field.buttonLlabel + " ";
-                                            const hoverBtn = new Kuc.Button({
-                                                text: buttonLabel,
-                                                type: 'normal',
-                                                id: targetField
-                                            });
-                                            customContextMenu.append(hoverBtn);
-                                            $(hoverBtn).on('click', async (e) => {
-                                                let fieldType = findPropertyById(record, srcField).type;
-                                                const langClick = field.languageCode;
-                                                await translateTor(fieldType, langClick, deLang, targetField);
-                                                fieldtranslated = {
-                                                    fieldID: fieldSelector,
-                                                    fieldISO: langClick
-                                                }
-                                                fieldIdIso.push(fieldtranslated);
-                                            });
-                                        }
-                                    });
-                                    $('body').append(customContextMenu);
-                                    $(document).on('click', function (el) {
-                                        if (!customContextMenu.is(el.currentTarget) && customContextMenu.has(el.currentTarget).length === 0) {
-                                            customContextMenu.remove();
-                                        }
-                                    });
-                                    customContextMenu.on('mouseleave', function () {
-                                        customContextMenu.remove();
-                                    });
+                                    createButtonISO(fieldEl, data, deLang, e);
                                 }
                             });
                         }
@@ -297,6 +154,111 @@ jQuery.noConflict();
                         clearTimeout(timeout);
                     });
                 });
+
+                function createButtonISO(fieldEl, data, deLang, e) {
+                    const oldContextMenu = $('#custom-context-menu');
+                    if (oldContextMenu.length) {
+                        oldContextMenu.remove();
+                    }
+                    var customContextMenu = $('<div>').attr('id', 'custom-context-menu')
+                        .css({
+                            position: 'absolute',
+                            background: '#fff',
+                            border: '1px solid #ccc',
+                            boxShadow: '2px 2px 5px rgba(0, 0, 0, 0.1)',
+                            padding: '5px',
+                            left: e.pageX + 'px',
+                            top: e.pageY + 'px'
+                        });
+                    $.each(LANGUAGELIST, function (i, field) {
+                        if (field.languageCode !== ISO_DEFAULT && field.languageCode !== '') {
+                            let targetField = fieldEl.fieldCode;
+                            let srcField = data.var;
+                            let buttonLabel = "";
+                            buttonLabel += field.buttonLlabel + " ";
+                            const hoverBtn = new Kuc.Button({
+                                text: buttonLabel,
+                                type: 'normal',
+                                id: targetField
+                            });
+                            customContextMenu.append(hoverBtn);
+                            $(hoverBtn).on('click', async (e) => {
+                                let fieldType = findPropertyById(record, srcField).type;
+                                let langClick = field.languageCode;
+                                await translateTor(fieldType, langClick, deLang, targetField);
+                                fieldtranslated = {
+                                    fieldID: fieldSelector,
+                                    fieldISO: langClick
+                                }
+                                fieldIdIso.push(fieldtranslated);
+                            });
+                        }
+                    });
+                    $('body').append(customContextMenu);
+                    $(document).on('click', function (el) {
+                        if (!customContextMenu.is(el.currentTarget) && customContextMenu.has(el.currentTarget).length === 0) {
+                            customContextMenu.remove();
+                        }
+                    });
+                    customContextMenu.on('mouseleave', function () {
+                        customContextMenu.remove();
+                    });
+                }
+
+                function createButtonTranslated(fieldEl, data, e, item, fieldSelector) {
+                    const oldContextMenu = $('#custom-context-menu');
+                    if (oldContextMenu.length) {
+                        oldContextMenu.remove();
+                    }
+
+                    var customContextMenu = $('<div>').attr('id', 'custom-context-menu')
+                        .css({
+                            position: 'absolute',
+                            background: '#fff',
+                            border: '1px solid #ccc',
+                            boxShadow: '2px 2px 5px rgba(0, 0, 0, 0.1)',
+                            padding: '5px',
+                            left: e.pageX + 'px',
+                            top: e.pageY + 'px'
+                        });
+                    $.each(LANGUAGELIST, function (i, field) {
+                        if (field.languageCode !== item.fieldISO && field.languageCode !== '') {
+                            let targetField = fieldEl.fieldCode;
+                            let srcField = data.var;
+                            let buttonLabel = "";
+                            buttonLabel += field.buttonLlabel + " ";
+                            const hoverBtn = new Kuc.Button({
+                                text: buttonLabel,
+                                type: 'normal',
+                                id: targetField
+                            });
+                            customContextMenu.append(hoverBtn);
+                            $(hoverBtn).on('click', async (e) => {
+                                let fieldType = findPropertyById(record, srcField).type;
+                                const langClick = field.languageCode;
+                                let isoSelete = item.fieldISO;
+                                await translateTor(fieldType, langClick, isoSelete, targetField);
+                                fieldtranslated = {
+                                    fieldID: fieldSelector,
+                                    fieldISO: langClick
+                                }
+                                fieldIdIso.push(fieldtranslated);
+                            });
+                        }
+                    });
+                    $('body').append(customContextMenu);
+                    $(document).on('click', function (el) {
+                        if (!customContextMenu.is(el.currentTarget) && customContextMenu.has(el.currentTarget).length === 0) {
+                            customContextMenu.remove();
+                        }
+                    });
+                    customContextMenu.on('mouseleave', function () {
+                        customContextMenu.remove();
+                    });
+                    return;;
+                }
+
+
             }
         };
 
@@ -322,12 +284,9 @@ jQuery.noConflict();
                 translated = await myMemoryApi(textTotl, deLang, langClick);
             }
             else if (fieldType === "MULTI_LINE_TEXT") {
-                // alert("MULTI_LINE_TEXT");
                 texts = texts.split('\n');
-                console.log(texts);
                 for await (let item of texts) {
                     if (!item) continue;
-                    console.log(item);
                     let translateText = await myMemoryApi(item, deLang, langClick);
                     if (typeof translateText === 'object') {
                         return translateText;
