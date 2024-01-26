@@ -23,10 +23,8 @@ jQuery.noConflict();
                 parsedLanguageListAndFieldItem = GETCONFIG.config ? JSON.parse(GETCONFIG.config) : [];
                 parsedLanguageList = parsedLanguageListAndFieldItem.languageList;
                 parsedFieldItem = parsedLanguageListAndFieldItem.translateFields;
-                console.log("parsedLanguageList");
-          console.log(parsedLanguageList);
           if (parsedLanguageList == undefined) {
-            createNewRow('con', "");  
+            createNewRow('Default', "");  
 
           }else{
             //Set default data
