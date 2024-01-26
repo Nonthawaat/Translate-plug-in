@@ -10,25 +10,25 @@ jQuery.noConflict();
             {
                 language: "English",
                 languageCode: "EN",
-                buttonLlabel: "English button",
+                buttonLabel: "English button",
                 languageIso: "ENG"
             },
             {
                 language: "japanese",
                 languageCode: "JA",
-                buttonLlabel: "japanese button",
+                buttonLabel: "japanese button",
                 languageIso: "JPN"
             },
             {
                 language: "Lao",
                 languageCode: "LO",
-                buttonLlabel: "Lao button",
+                buttonLabel: "Lao button",
                 languageIso: "LAO"
             },
             {
                 language: "Thai",
                 languageCode: "TH",
-                buttonLlabel: "Thai button",
+                buttonLabel: "Thai button",
                 languageIso: "THA"
             }
         ],
@@ -121,7 +121,6 @@ jQuery.noConflict();
         }
         return null;
     }
-
     kintone.events.on(['app.record.edit.show', 'app.record.create.show'], async function (event) {
         const record = event.record;
         const deLang = ISO_DEFAULT;
@@ -129,181 +128,238 @@ jQuery.noConflict();
         for await (let item of TRANSLATEFFIELDS) {
             let fieldIdIso = [];
             let fieldtranslated = "";
-            for (let obj = 0; obj < LANGUAGELIST.length; obj++) {
-                // console.log(obj);
-                let fieldEl = item.targetFields;
-                if (!fieldEl.fieldCode || fieldEl.fieldCode == '') continue;
-                let data = getFieldData(schema_data, fieldEl.fieldCode);
-                let fieldSelector = `.field-${data.id}`;
-                $(document).on('mouseover', fieldSelector, async function (e) {
-                    let timeout = setTimeout(async () => {
-                        e.preventDefault();
-                        if (fieldIdIso.length == 0) {
-                            const oldContextMenu = $('#custom-context-menu');
-                            if (oldContextMenu.length) {
-                                oldContextMenu.remove();
+
+            let fieldEl = item.targetFields;
+            let data = getFieldData(schema_data, fieldEl.fieldCode);
+            let fieldSelector = `.field-${data.id}`;
+            $(document).on('mouseover', fieldSelector, async function (e) {
+                let timeout = setTimeout(async () => {
+                    e.preventDefault();
+                    if (fieldIdIso.length == 0) {
+                        // console.log("createButtonFromDefault");
+                        createButtonFromDefault(fieldEl, data, deLang, e, fieldSelector, fieldIdIso, fieldtranslated);
+                    } else {
+                        fieldIdIso.forEach(fieldItems => {
+                            if (fieldSelector === fieldItems.fieldID) {
+                                // console.log("createBtnFromTranslated");
+                                createBtnFromTranslated(fieldEl, data, e, fieldItems, fieldSelector, fieldIdIso, fieldtranslated);
+                            } else {
+                                // console.log("createButtonFromDefault");
+                                createButtonFromDefault(fieldEl, data, deLang, e, fieldSelector, fieldIdIso, fieldtranslated);
                             }
-                            var customContextMenu = $('<div>').attr('id', 'custom-context-menu')
-                                .css({
-                                    position: 'absolute',
-                                    background: '#fff',
-                                    border: '1px solid #ccc',
-                                    boxShadow: '2px 2px 5px rgba(0, 0, 0, 0.1)',
-                                    padding: '5px',
-                                    left: e.pageX + 'px',
-                                    top: e.pageY + 'px'
-                                });
-                            $.each(LANGUAGELIST, function (i, field) {
-                                if (field.languageCode !== ISO_DEFAULT && field.languageCode !== '') {
-                                    let targetField = fieldEl.fieldCode;
-                                    let srcField = data.var;
-                                    let buttonLabel = "";
-                                    buttonLabel += field.buttonLlabel + " ";
-                                    const hoverBtn = new Kuc.Button({
-                                        text: buttonLabel,
-                                        type: 'normal',
-                                        id: targetField
-                                    });
-                                    customContextMenu.append(hoverBtn);
-                                    $(hoverBtn).on('click', async (e) => {
-                                        let fieldType = findPropertyById(record, srcField).type;
-                                        let langClick = field.languageCode;
-                                        await translateTor(fieldType, langClick, deLang, targetField);
-                                        fieldtranslated = {
-                                            fieldID: fieldSelector,
-                                            fieldISO: langClick
-                                        }
-                                        fieldIdIso.push(fieldtranslated);
-                                    });
-                                }
-                            });
-                            $('body').append(customContextMenu);
-                            $(document).on('click', function (el) {
-                                if (!customContextMenu.is(el.currentTarget) && customContextMenu.has(el.currentTarget).length === 0) {
-                                    customContextMenu.remove();
-                                }
-                            });
-                            customContextMenu.on('mouseleave', function () {
-                                customContextMenu.remove();
-                            });
-                        } else {
-                            fieldIdIso.forEach(count => {
-                                if (fieldSelector === count.fieldID) {
-                                    const oldContextMenu = $('#custom-context-menu');
-                                    if (oldContextMenu.length) {
-                                        oldContextMenu.remove();
-                                    }
-
-                                    var customContextMenu = $('<div>').attr('id', 'custom-context-menu')
-                                        .css({
-                                            position: 'absolute',
-                                            background: '#fff',
-                                            border: '1px solid #ccc',
-                                            boxShadow: '2px 2px 5px rgba(0, 0, 0, 0.1)',
-                                            padding: '5px',
-                                            left: e.pageX + 'px',
-                                            top: e.pageY + 'px'
-                                        });
-                                    $.each(LANGUAGELIST, function (i, field) {
-                                        if (field.languageCode !== count.fieldISO && field.languageCode !== '') {
-                                            let targetField = fieldEl.fieldCode;
-                                            let srcField = data.var;
-                                            let buttonLabel = "";
-                                            buttonLabel += field.buttonLlabel + " ";
-                                            const hoverBtn = new Kuc.Button({
-                                                text: buttonLabel,
-                                                type: 'normal',
-                                                id: targetField
-                                            });
-                                            customContextMenu.append(hoverBtn);
-                                            $(hoverBtn).on('click', async (e) => {
-                                                let fieldType = findPropertyById(record, srcField).type;
-                                                const langClick = field.languageCode;
-                                                let isoSelete = count.fieldISO;
-                                                await translateTor(fieldType, langClick, isoSelete, targetField);
-                                                fieldtranslated = {
-                                                    fieldID: fieldSelector,
-                                                    fieldISO: langClick
-                                                }
-                                                fieldIdIso.push(fieldtranslated);
-                                            });
-                                        }
-                                    });
-                                    $('body').append(customContextMenu);
-                                    $(document).on('click', function (el) {
-                                        if (!customContextMenu.is(el.currentTarget) && customContextMenu.has(el.currentTarget).length === 0) {
-                                            customContextMenu.remove();
-                                        }
-                                    });
-                                    customContextMenu.on('mouseleave', function () {
-                                        customContextMenu.remove();
-                                    });
-                                    return;
-                                } else {
-                                    console.log("ບໍ່ແປ");
-                                    const oldContextMenu = $('#custom-context-menu');
-                                    if (oldContextMenu.length) {
-                                        oldContextMenu.remove();
-                                    }
-
-                                    var customContextMenu = $('<div>').attr('id', 'custom-context-menu')
-                                        .css({
-                                            position: 'absolute',
-                                            background: '#fff',
-                                            border: '1px solid #ccc',
-                                            boxShadow: '2px 2px 5px rgba(0, 0, 0, 0.1)',
-                                            padding: '5px',
-                                            left: e.pageX + 'px',
-                                            top: e.pageY + 'px'
-                                        });
-                                    $.each(LANGUAGELIST, function (i, field) {
-                                        if (field.languageCode !== ISO_DEFAULT && field.languageCode !== '') {
-                                            let targetField = fieldEl.fieldCode;
-                                            let srcField = data.var;
-                                            let buttonLabel = "";
-                                            buttonLabel += field.buttonLlabel + " ";
-                                            const hoverBtn = new Kuc.Button({
-                                                text: buttonLabel,
-                                                type: 'normal',
-                                                id: targetField
-                                            });
-                                            customContextMenu.append(hoverBtn);
-                                            $(hoverBtn).on('click', async (e) => {
-                                                let fieldType = findPropertyById(record, srcField).type;
-                                                const langClick = field.languageCode;
-                                                await translateTor(fieldType, langClick, deLang, targetField);
-                                                fieldtranslated = {
-                                                    fieldID: fieldSelector,
-                                                    fieldISO: langClick
-                                                }
-                                                fieldIdIso.push(fieldtranslated);
-                                            });
-                                        }
-                                    });
-                                    $('body').append(customContextMenu);
-                                    $(document).on('click', function (el) {
-                                        if (!customContextMenu.is(el.currentTarget) && customContextMenu.has(el.currentTarget).length === 0) {
-                                            customContextMenu.remove();
-                                        }
-                                    });
-                                    customContextMenu.on('mouseleave', function () {
-                                        customContextMenu.remove();
-                                    });
-                                }
-                            });
-                        }
-                    }, 400);
-                    $(this).on('mouseout', function () {
-                        clearTimeout(timeout);
-                    });
+                        });
+                    }
+                }, 400);
+                $(this).on('mouseout', function () {
+                    clearTimeout(timeout);
                 });
+            });
+        };
+
+        async function createButtonFromDefault(fieldEl, data, deLang, e, fieldSelector, fieldIdIso, fieldtranslated) {
+            const oldContextMenu = $('#custom-context-menu');
+            if (oldContextMenu.length) {
+                oldContextMenu.remove();
             }
+            var customContextMenu = $('<div>').attr('id', 'custom-context-menu').css({
+                position: 'absolute',
+                background: '#fff',
+                border: '2px solid #ccc',
+                boxShadow: '2px 2px 5px rgba(0, 0, 0, 0.1)',
+                padding: '5px',
+                left: e.pageX + 'px',
+                top: e.pageY + 'px',
+            });
+            let targetField = fieldEl.fieldCode;
+            let oldButtonArray = [];
+            $.each(LANGUAGELIST, function (i, field) {
+                if (field.languageCode !== ISO_DEFAULT && field.languageCode !== '') {
+                    let srcField = data.var;
+                    let buttonLabel = "";
+                    let langClick = field.languageCode;
+                    buttonLabel += field.buttonLabel + " ";
+                    const hoverBtn = new Kuc.Button({
+                        text: buttonLabel,
+                        type: 'normal',
+                        id: targetField,
+                        className: targetField
+                    });
+                    customContextMenu.append(hoverBtn);
+                    $(hoverBtn).on('click', async (e) => {
+                        let fieldLabel = field.buttonLabel;
+                        let newButton = "";
+                        if (oldButtonArray.length == 0) {
+                            newButton = $(`.${targetField} button:contains(${fieldLabel})`);
+                            newButton.addClass('kuc-button-1-15-0__button kuc-button-1-15-0__button--submit');
+                            let oldField = {
+                                old: fieldLabel
+                            }
+                            oldButtonArray.push(oldField);
+                        } else {
+                            let lastButton = oldButtonArray.length - 1;
+                            // console.log(oldButtonArray[lastButton].old);
+                            if (fieldLabel !== oldButtonArray[lastButton].old) {
+                                let oldButton = $(`.${targetField} button:contains(${oldButtonArray[lastButton].old})`);
+                                oldButton.removeClass('kuc-button-1-15-0__button kuc-button-1-15-0__button--submit');
+                                oldButton.addClass('kuc-button-1-15-0__button kuc-button-1-15-0__button--normal');
+
+                                newButton = $(`.${targetField} button:contains(${fieldLabel})`);
+                                newButton.addClass('kuc-button-1-15-0__button kuc-button-1-15-0__button--submit');
+                                let oldField = {
+                                    old: fieldLabel
+                                }
+                                oldButtonArray.push(oldField);
+                                // console.log(oldButtonArray);
+                            } else {
+                                newButton = $(`.${targetField} button:contains(${fieldLabel})`);
+                                newButton.addClass('kuc-button-1-15-0__button kuc-button-1-15-0__button--submit');
+                                let oldField = {
+                                    old: fieldLabel
+                                }
+                                oldButtonArray.push(oldField);
+                                // console.log(oldButtonArray);
+                            }
+                        }
+                        if (fieldIdIso.length == 0) {
+                            let fieldType = findPropertyById(record, srcField).type;
+                            await translateTor(fieldType, langClick, deLang, targetField);
+                            fieldtranslated = {
+                                fieldID: fieldSelector,
+                                fieldISO: langClick
+                            }
+                            fieldIdIso.push(fieldtranslated);
+                        } else {
+                            let isoSelete = "";
+                            let langClick = field.languageCode;
+                            let fieldType
+                            fieldIdIso.forEach(async items => {
+                                fieldType = findPropertyById(record, srcField).type;
+                                isoSelete = items.fieldISO;
+                            });
+                            await translateTor(fieldType, langClick, isoSelete, targetField);
+                            fieldtranslated = {
+                                fieldID: fieldSelector,
+                                fieldISO: langClick
+                            }
+                            fieldIdIso.push(fieldtranslated);
+                        }
+
+                    });
+                }
+                return
+            });
+
+            $('body').append(customContextMenu);
+            customContextMenu.on('mouseleave', function () {
+                customContextMenu.remove();
+            });
+        };
+
+        async function createBtnFromTranslated(fieldEl, data, e, fieldItems, fieldSelector, fieldIdIso, fieldtranslated) {
+            const oldContextMenu = $('#custom-context-menu');
+            if (oldContextMenu.length) {
+                oldContextMenu.remove();
+            }
+
+            var customContextMenu = $('<div>').attr('id', 'custom-context-menu').css({
+                position: 'absolute',
+                background: '#fff',
+                border: '1px solid #ccc',
+                boxShadow: '2px 2px 5px rgba(0, 0, 0, 0.1)',
+                padding: '5px',
+                left: e.pageX + 'px',
+                top: e.pageY + 'px'
+            });
+            let targetField = fieldEl.fieldCode;
+            let oldButtonArray = [];
+            $.each(LANGUAGELIST, function (i, field) {
+                if (field.languageCode !== fieldItems.fieldISO && field.languageCode !== '') {
+                    let srcField = data.var;
+                    let buttonLabel = "";
+                    buttonLabel += field.buttonLabel + " ";
+                    const hoverBtn = new Kuc.Button({
+                        text: buttonLabel,
+                        type: 'normal',
+                        id: targetField,
+                        className: targetField
+                    });
+                    customContextMenu.append(hoverBtn);
+                    $(hoverBtn).on('click', async (e) => {
+
+                        let fieldLabel = field.buttonLabel;
+                        let newButton = "";
+                        if (oldButtonArray.length == 0) {
+                            console.log("ວ່າງ");
+                            console.log(targetField);
+                            console.log(fieldLabel);
+                            newButton = $(`.${targetField} button:contains(${fieldLabel})`);
+                            newButton.addClass('kuc-button-1-15-0__button kuc-button-1-15-0__button--submit');
+                            console.log(newButton);
+                            let oldField = {
+                                old: fieldLabel
+                            }
+                            oldButtonArray.push(oldField);
+                            console.log(oldButtonArray);
+                        } else {
+                            console.log("ບໍ່ວ່າງ");
+                            let lastButton = oldButtonArray.length - 1;
+                            console.log(oldButtonArray[lastButton].old);
+                            if (fieldLabel !== oldButtonArray[lastButton].old) {
+                                console.log("if");
+                                let oldButton = $(`.${targetField} button:contains(${oldButtonArray[lastButton].old})`);
+                                oldButton.removeClass('kuc-button-1-15-0__button kuc-button-1-15-0__button--submit');
+                                oldButton.addClass('kuc-button-1-15-0__button kuc-button-1-15-0__button--normal');
+
+                                newButton = $(`.${targetField} button:contains(${fieldLabel})`);
+                                newButton.addClass('kuc-button-1-15-0__button kuc-button-1-15-0__button--submit');
+                                let oldField = {
+                                    old: fieldLabel
+                                }
+                                oldButtonArray.push(oldField);
+                                console.log(oldButtonArray);
+                            } else {
+                                console.log("else");
+                                newButton = $(`.${targetField} button:contains(${fieldLabel})`);
+                                newButton.addClass('kuc-button-1-15-0__button kuc-button-1-15-0__button--submit');
+                                let oldField = {
+                                    old: fieldLabel
+                                }
+                                oldButtonArray.push(oldField);
+                                console.log(oldButtonArray);
+                            }
+                        }
+
+                        let isoSelete = "";
+                        let langClick = field.languageCode;
+                        let fieldType
+                        fieldIdIso.forEach(async items => {
+                            fieldType = findPropertyById(record, srcField).type;
+                            isoSelete = items.fieldISO;
+                        });
+                        await translateTor(fieldType, langClick, isoSelete, targetField);
+                        fieldtranslated = {
+                            fieldID: fieldSelector,
+                            fieldISO: langClick
+                        }
+                        fieldIdIso.push(fieldtranslated);
+
+                    });
+                }
+            });
+            $('body').append(customContextMenu);
+            customContextMenu.on('mouseleave', function () {
+                customContextMenu.remove();
+            });
+            return;
         };
 
         async function translateTor(fieldType, langClick, deLang, targetField) {
+            // console.log(deLang);
+            // console.log(langClick);
             let resp = kintone.app.record.get();
             let respText = '';
             let textTotl = resp.record[targetField].value;
+            if (langClick === deLang) { return }
             if (targetField) {
                 respText = await translateText(fieldType, textTotl || '', langClick, deLang);
                 if (typeof respText === 'object') {
@@ -324,10 +380,10 @@ jQuery.noConflict();
             else if (fieldType === "MULTI_LINE_TEXT") {
                 // alert("MULTI_LINE_TEXT");
                 texts = texts.split('\n');
-                console.log(texts);
+                // console.log(texts);
                 for await (let item of texts) {
                     if (!item) continue;
-                    console.log(item);
+                    // console.log(item);
                     let translateText = await myMemoryApi(item, deLang, langClick);
                     if (typeof translateText === 'object') {
                         return translateText;
@@ -362,6 +418,7 @@ jQuery.noConflict();
         }
 
         async function myMemoryApi(textTotl, deLang, langClick) {
+            // console.log("My memory");
             let trans = await axios({ method: 'GET', url: `https://api.mymemory.translated.net/get?q=${textTotl}&langpair=${deLang}|${langClick}` }).catch((err) => {
                 throw new Error("Translate Error");
             });
