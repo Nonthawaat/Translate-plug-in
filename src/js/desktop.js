@@ -177,6 +177,7 @@ jQuery.noConflict();
                     let srcField = data.var;
                     let buttonLabel = "";
                     let langClick = field.languageCode;
+                    let fieldLabel = field.buttonLabel;
                     buttonLabel += field.buttonLabel + " ";
                     const hoverBtn = new Kuc.Button({
                         text: buttonLabel,
@@ -186,40 +187,6 @@ jQuery.noConflict();
                     });
                     customContextMenu.append(hoverBtn);
                     $(hoverBtn).on('click', async (e) => {
-                        let fieldLabel = field.buttonLabel;
-                        let newButton = "";
-                        if (oldButtonArray.length == 0) {
-                            newButton = $(`.${targetField} button:contains(${fieldLabel})`);
-                            newButton.addClass('kuc-button-1-15-0__button kuc-button-1-15-0__button--submit');
-                            let oldField = {
-                                old: fieldLabel
-                            }
-                            oldButtonArray.push(oldField);
-                        } else {
-                            let lastButton = oldButtonArray.length - 1;
-                            // console.log(oldButtonArray[lastButton].old);
-                            if (fieldLabel !== oldButtonArray[lastButton].old) {
-                                let oldButton = $(`.${targetField} button:contains(${oldButtonArray[lastButton].old})`);
-                                oldButton.removeClass('kuc-button-1-15-0__button kuc-button-1-15-0__button--submit');
-                                oldButton.addClass('kuc-button-1-15-0__button kuc-button-1-15-0__button--normal');
-
-                                newButton = $(`.${targetField} button:contains(${fieldLabel})`);
-                                newButton.addClass('kuc-button-1-15-0__button kuc-button-1-15-0__button--submit');
-                                let oldField = {
-                                    old: fieldLabel
-                                }
-                                oldButtonArray.push(oldField);
-                                // console.log(oldButtonArray);
-                            } else {
-                                newButton = $(`.${targetField} button:contains(${fieldLabel})`);
-                                newButton.addClass('kuc-button-1-15-0__button kuc-button-1-15-0__button--submit');
-                                let oldField = {
-                                    old: fieldLabel
-                                }
-                                oldButtonArray.push(oldField);
-                                // console.log(oldButtonArray);
-                            }
-                        }
                         if (fieldIdIso.length == 0) {
                             let fieldType = findPropertyById(record, srcField).type;
                             await translateTor(fieldType, langClick, deLang, targetField);
@@ -243,7 +210,7 @@ jQuery.noConflict();
                             }
                             fieldIdIso.push(fieldtranslated);
                         }
-
+                        activeButton(targetField,fieldLabel,oldButtonArray);
                     });
                 }
                 return
@@ -276,6 +243,7 @@ jQuery.noConflict();
                 if (field.languageCode !== fieldItems.fieldISO && field.languageCode !== '') {
                     let srcField = data.var;
                     let buttonLabel = "";
+                    let fieldLabel = field.buttonLabel;
                     buttonLabel += field.buttonLabel + " ";
                     const hoverBtn = new Kuc.Button({
                         text: buttonLabel,
@@ -285,50 +253,7 @@ jQuery.noConflict();
                     });
                     customContextMenu.append(hoverBtn);
                     $(hoverBtn).on('click', async (e) => {
-
-                        let fieldLabel = field.buttonLabel;
-                        let newButton = "";
-                        if (oldButtonArray.length == 0) {
-                            console.log("ວ່າງ");
-                            console.log(targetField);
-                            console.log(fieldLabel);
-                            newButton = $(`.${targetField} button:contains(${fieldLabel})`);
-                            newButton.addClass('kuc-button-1-15-0__button kuc-button-1-15-0__button--submit');
-                            console.log(newButton);
-                            let oldField = {
-                                old: fieldLabel
-                            }
-                            oldButtonArray.push(oldField);
-                            console.log(oldButtonArray);
-                        } else {
-                            console.log("ບໍ່ວ່າງ");
-                            let lastButton = oldButtonArray.length - 1;
-                            console.log(oldButtonArray[lastButton].old);
-                            if (fieldLabel !== oldButtonArray[lastButton].old) {
-                                console.log("if");
-                                let oldButton = $(`.${targetField} button:contains(${oldButtonArray[lastButton].old})`);
-                                oldButton.removeClass('kuc-button-1-15-0__button kuc-button-1-15-0__button--submit');
-                                oldButton.addClass('kuc-button-1-15-0__button kuc-button-1-15-0__button--normal');
-
-                                newButton = $(`.${targetField} button:contains(${fieldLabel})`);
-                                newButton.addClass('kuc-button-1-15-0__button kuc-button-1-15-0__button--submit');
-                                let oldField = {
-                                    old: fieldLabel
-                                }
-                                oldButtonArray.push(oldField);
-                                console.log(oldButtonArray);
-                            } else {
-                                console.log("else");
-                                newButton = $(`.${targetField} button:contains(${fieldLabel})`);
-                                newButton.addClass('kuc-button-1-15-0__button kuc-button-1-15-0__button--submit');
-                                let oldField = {
-                                    old: fieldLabel
-                                }
-                                oldButtonArray.push(oldField);
-                                console.log(oldButtonArray);
-                            }
-                        }
-
+                        activeButton(targetField,fieldLabel,oldButtonArray);
                         let isoSelete = "";
                         let langClick = field.languageCode;
                         let fieldType
@@ -352,6 +277,41 @@ jQuery.noConflict();
             });
             return;
         };
+
+        async function activeButton(targetField,fieldLabel,oldButtonArray){
+            let newButton = "";
+            if (oldButtonArray.length == 0) {
+                newButton = $(`.${targetField} button:contains(${fieldLabel})`);
+                newButton.addClass('kuc-button-1-15-0__button kuc-button-1-15-0__button--submit');
+                console.log(newButton);
+                let oldField = {
+                    old: fieldLabel
+                }
+                oldButtonArray.push(oldField);
+            } else {
+                let lastButton = oldButtonArray.length - 1;
+                console.log(oldButtonArray[lastButton].old);
+                if (fieldLabel !== oldButtonArray[lastButton].old) {
+                    let oldButton = $(`.${targetField} button:contains(${oldButtonArray[lastButton].old})`);
+                    oldButton.removeClass('kuc-button-1-15-0__button kuc-button-1-15-0__button--submit');
+                    oldButton.addClass('kuc-button-1-15-0__button kuc-button-1-15-0__button--normal');
+                    newButton = $(`.${targetField} button:contains(${fieldLabel})`);
+                    newButton.addClass('kuc-button-1-15-0__button kuc-button-1-15-0__button--submit');
+                    let oldField = {
+                        old: fieldLabel
+                    }
+                    oldButtonArray.push(oldField);
+                } else {
+                    console.log("else");
+                    newButton = $(`.${targetField} button:contains(${fieldLabel})`);
+                    newButton.addClass('kuc-button-1-15-0__button kuc-button-1-15-0__button--submit');
+                    let oldField = {
+                        old: fieldLabel
+                    }
+                    oldButtonArray.push(oldField);
+                }
+            }
+        }
 
         async function translateTor(fieldType, langClick, deLang, targetField) {
             // console.log(deLang);
