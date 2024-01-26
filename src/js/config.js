@@ -312,10 +312,10 @@ jQuery.noConflict();
                 }
             }
             config = {
-                defaultLanguage: allDefaultLanguage[0],
+                defaultLanguage: $('#select_default_lang_column option:selected').val(),
                 languageList,
                 translateFields,
-            };
+            };
             console.log(config);
 
             config = JSON.stringify(config);

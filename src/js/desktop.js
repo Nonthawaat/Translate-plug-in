@@ -10,7 +10,7 @@ jQuery.noConflict();
     CONFIGITEMS = CONFIG.config ? JSON.parse(CONFIG.config) : [];
     TRANSLATEFFIELDS = CONFIGITEMS.translateFields;
     LANGUAGELIST = CONFIGITEMS.languageList;
-    ISO_DEFAULT = CONFIGITEMS.defaultLanguage || LANGUAGELIST[0].languageCode;
+    ISO_DEFAULT = CONFIGITEMS.defaultLanguage;
     function findPropertyById(obj, targetId) {
         for (const key in obj) {
             if (key === targetId) {
