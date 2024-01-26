@@ -49,7 +49,6 @@ jQuery.noConflict();
 
         // ------------------------------------------------------[Function]--------------------------------------------------
         function getFieldType(record, getID) {
-            console.log(getID);
             for (const key in record) {
                 if (key === getID) {
                     return record[key];
@@ -92,7 +91,6 @@ jQuery.noConflict();
                 if (field.languageCode !== ISO_DEFAULT) { // Check the language code doesnot match the default language
                     // ----------Start get data-------------
                     let getID = getFieldID.var;
-                    console.log(getID);
                     let buttonLabel = "";
                     buttonLabel += field.buttonLabel + " ";
                     let langClick = field.languageCode;
