@@ -24,22 +24,21 @@ jQuery.noConflict();
             let translatedField = [];
             let oldField = "";
             let fieldEl = item.targeFields;
-            let getFieldData = getFieldCode(schemaData, fieldEl.fieldCode);
-            let fieldSelector = `.field-${getFieldData.id}`;
-
+            let getFieldID = getFieldCode(schemaData, fieldEl.fieldCode);
+            let fieldSelector = `.field-${getFieldID.id}`;
             // ----------Start mouse hover Get data-------------
             $(document).on('mouseover', fieldSelector, async function (e) {
                 let timeout = setTimeout(async () => {
                     e.preventDefault();
                     let lastField = translatedField.length - 1; // Get last number of translate field array
                     if (translatedField.length == 0) {
-                        createButtonFromDefault(fieldEl, getFieldData, deLang, e, fieldSelector, translatedField, oldField);
+                        createButtonFromDefault(fieldEl, getFieldID, deLang, e, fieldSelector, translatedField, oldField);
                     }
                     else if (fieldSelector === translatedField[lastField].fieldID) {
                         let fieldItems = translatedField[lastField].fieldISO; // Get last item of translate field array
-                        createBtnFromTranslated(fieldEl, getFieldData, e, fieldItems, fieldSelector, translatedField, oldField);
+                        createBtnFromTranslated(fieldEl, getFieldID, e, fieldItems, fieldSelector, translatedField, oldField);
                     } else {
-                        createButtonFromDefault(fieldEl, getFieldData, deLang, e, fieldSelector, translatedField, oldField);
+                        createButtonFromDefault(fieldEl, getFieldID, deLang, e, fieldSelector, translatedField, oldField);
                     }
                 }, 400);
                 $(this).on('mouseout', function () {
@@ -47,13 +46,15 @@ jQuery.noConflict();
                 });
             });
         };
+
         // ------------------------------------------------------[Function]--------------------------------------------------
-        function getFieldType(record, targetId) {
+        function getFieldType(record, getID) {
+            console.log(getID);
             for (const key in record) {
-                if (key === targetId) {
+                if (key === getID) {
                     return record[key];
                 } else if (typeof record[key] === 'object') {
-                    const result = getFieldType(record[key], targetId);
+                    const result = getFieldType(record[key], getID);
                     if (result !== undefined) {
                         return result;
                     }
@@ -68,7 +69,7 @@ jQuery.noConflict();
             }
             return null;
         };
-        async function createButtonFromDefault(fieldEl, getFieldData, deLang, e, fieldSelector, translatedField, oldField) {
+        async function createButtonFromDefault(fieldEl, getFieldID, deLang, e, fieldSelector, translatedField, oldField) {
             const oldTranslateButtone = $('#translate-button');
             let targetField = fieldEl.fieldCode;
             let oldButtonArray = [];
@@ -90,7 +91,8 @@ jQuery.noConflict();
             $.each(LANGUAGELIST, function (i, field) {
                 if (field.languageCode !== ISO_DEFAULT) { // Check the language code doesnot match the default language
                     // ----------Start get data-------------
-                    let getText = getFieldData.var;
+                    let getID = getFieldID.var;
+                    console.log(getID);
                     let buttonLabel = "";
                     buttonLabel += field.buttonLabel + " ";
                     let langClick = field.languageCode;
@@ -107,7 +109,7 @@ jQuery.noConflict();
                     $(hoverBtn).on('click', async (e) => {
                         activeButton(targetField, fieldLabel, oldButtonArray);
                         if (translatedField.length == 0) {
-                            let fieldType = getFieldType(record, getText).type;
+                            let fieldType = getFieldType(record, getID).type;
                             await translateTor(fieldType, langClick, deLang, targetField);
                             oldField = {
                                 fieldID: fieldSelector,
@@ -117,9 +119,9 @@ jQuery.noConflict();
                         } else {
                             let isoSelete = "";
                             let langClick = field.languageCode;
-                            let fieldType
+                            let fieldType = "";
                             translatedField.forEach(async items => {
-                                fieldType = getFieldType(record, getText).type;
+                                fieldType = getFieldType(record, getID).type;
                                 isoSelete = items.fieldISO;
                             });
                             await translateTor(fieldType, langClick, isoSelete, targetField);
@@ -139,7 +141,7 @@ jQuery.noConflict();
                 translateButton.remove();
             });
         };
-        async function createBtnFromTranslated(fieldEl, getFieldData, e, fieldItems, fieldSelector, translatedField, oldField) {
+        async function createBtnFromTranslated(fieldEl, getFieldID, e, fieldItems, fieldSelector, translatedField, oldField) {
             const oldTranslateButtone = $('#translate-button');
             if (oldTranslateButtone.length) {
                 oldTranslateButtone.remove();
@@ -157,7 +159,7 @@ jQuery.noConflict();
             let oldButtonArray = [];
             $.each(LANGUAGELIST, function (i, field) {
                 if (field.languageCode !== fieldItems && field.languageCode !== '') {
-                    let getText = getFieldData.var;
+                    let getText = getFieldID.var;
                     let buttonLabel = "";
                     let fieldLabel = field.buttonLabel;
                     buttonLabel += field.buttonLabel + " ";
@@ -223,7 +225,7 @@ jQuery.noConflict();
                     oldButtonArray.push(oldField);
                 }
             }
-        }
+        };
         async function translateTor(fieldType, langClick, deLang, targetField) {
             // console.log(deLang);
             // console.log(langClick);
@@ -239,7 +241,7 @@ jQuery.noConflict();
                 resp.record[targetField].value = respText;
                 kintone.app.record.set(resp);
             }
-        }
+        };
         async function translateText(fieldType, textTotl, langClick, deLang) {
             let texts = textTotl;
             // console.log(texts);
@@ -285,7 +287,7 @@ jQuery.noConflict();
                 return texts;
             }
             return translated;
-        }
+        };
         async function myMemoryApi(textTotl, deLang, langClick) {
             let trans = await axios({ method: 'GET', url: `https://api.mymemory.translated.net/get?q=${textTotl}&langpair=${deLang}|${langClick}` }).catch((err) => {
                 throw new Error("Translate Error");
@@ -303,7 +305,7 @@ jQuery.noConflict();
                     response.data.responseStatus
                 );
             }
-        }
+        };
     });
     // ----------End kintone events on edit and create page------------
 })(jQuery, kintone.$PLUGIN_ID);
