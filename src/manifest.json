@@ -5,7 +5,6 @@
   "desktop": {
     "js": [
 			"js/jquery-2.2.4.min.js",
-			"js/sweetalert2.all.js",
 			"https://unpkg.com/kintone-ui-component/umd/kuc.min.js",
       "https://cdn.jsdelivr.net/npm/axios@1.6.5/dist/axios.min.js",
       "js/desktop.js"
