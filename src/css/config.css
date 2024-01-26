@@ -1,7 +1,30 @@
-.settings-heading {
-  padding: 1em 0;
+.drag-handle {
+  cursor: move;
+  font-size: 16px;
+  margin-top: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 15px;
+  border: 1px solid gray;
+  border-radius: 5px;
+  padding: 8px;
 }
 
-.kintoneplugin-input-text {
-  width: 20em;
+.dragging {
+  background-color: #f5f5f5;
+  opacity: 0.5;
+}
+
+.kintoneplugin-row{
+  margin-left: 50px;
+}
+#Default_Language{
+  padding: 0;
+}
+label{
+  margin-left: 50px;
+}
+#fieldsListTable{
+  margin-left: 50px;
 }

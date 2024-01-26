@@ -30,6 +30,12 @@ jQuery.noConflict();
                 languageCode: "TH",
                 buttonLabel: "Thai button",
                 languageIso: "THA"
+            },
+            {
+                language: "Chinese (Simplified)",
+                languageCode: "zh-CN",
+                buttonLabel: "Chinese (Simplified)",
+                languageIso: "ZHO"
             }
         ],
         translateFfields: [
@@ -128,26 +134,21 @@ jQuery.noConflict();
         for await (let item of TRANSLATEFFIELDS) {
             let fieldIdIso = [];
             let fieldtranslated = "";
-
             let fieldEl = item.targetFields;
             let data = getFieldData(schema_data, fieldEl.fieldCode);
             let fieldSelector = `.field-${data.id}`;
             $(document).on('mouseover', fieldSelector, async function (e) {
                 let timeout = setTimeout(async () => {
                     e.preventDefault();
+                    let lastField = fieldIdIso.length - 1;
                     if (fieldIdIso.length == 0) {
-                        // console.log("createButtonFromDefault");
                         createButtonFromDefault(fieldEl, data, deLang, e, fieldSelector, fieldIdIso, fieldtranslated);
+                    } 
+                    else if (fieldSelector === fieldIdIso[lastField].fieldID) {
+                        let fieldItems = fieldIdIso[lastField].fieldISO;
+                        createBtnFromTranslated(fieldEl, data, e, fieldItems, fieldSelector, fieldIdIso, fieldtranslated);
                     } else {
-                        fieldIdIso.forEach(fieldItems => {
-                            if (fieldSelector === fieldItems.fieldID) {
-                                // console.log("createBtnFromTranslated");
-                                createBtnFromTranslated(fieldEl, data, e, fieldItems, fieldSelector, fieldIdIso, fieldtranslated);
-                            } else {
-                                // console.log("createButtonFromDefault");
-                                createButtonFromDefault(fieldEl, data, deLang, e, fieldSelector, fieldIdIso, fieldtranslated);
-                            }
-                        });
+                        createButtonFromDefault(fieldEl, data, deLang, e, fieldSelector, fieldIdIso, fieldtranslated);
                     }
                 }, 400);
                 $(this).on('mouseout', function () {
@@ -187,6 +188,7 @@ jQuery.noConflict();
                     });
                     customContextMenu.append(hoverBtn);
                     $(hoverBtn).on('click', async (e) => {
+                        activeButton(targetField, fieldLabel, oldButtonArray);
                         if (fieldIdIso.length == 0) {
                             let fieldType = findPropertyById(record, srcField).type;
                             await translateTor(fieldType, langClick, deLang, targetField);
@@ -210,7 +212,6 @@ jQuery.noConflict();
                             }
                             fieldIdIso.push(fieldtranslated);
                         }
-                        activeButton(targetField,fieldLabel,oldButtonArray);
                     });
                 }
                 return
@@ -227,7 +228,6 @@ jQuery.noConflict();
             if (oldContextMenu.length) {
                 oldContextMenu.remove();
             }
-
             var customContextMenu = $('<div>').attr('id', 'custom-context-menu').css({
                 position: 'absolute',
                 background: '#fff',
@@ -240,7 +240,7 @@ jQuery.noConflict();
             let targetField = fieldEl.fieldCode;
             let oldButtonArray = [];
             $.each(LANGUAGELIST, function (i, field) {
-                if (field.languageCode !== fieldItems.fieldISO && field.languageCode !== '') {
+                if (field.languageCode !== fieldItems && field.languageCode !== '') {
                     let srcField = data.var;
                     let buttonLabel = "";
                     let fieldLabel = field.buttonLabel;
@@ -253,10 +253,10 @@ jQuery.noConflict();
                     });
                     customContextMenu.append(hoverBtn);
                     $(hoverBtn).on('click', async (e) => {
-                        activeButton(targetField,fieldLabel,oldButtonArray);
+                        activeButton(targetField, fieldLabel, oldButtonArray);
                         let isoSelete = "";
                         let langClick = field.languageCode;
-                        let fieldType
+                        let fieldType = "";
                         fieldIdIso.forEach(async items => {
                             fieldType = findPropertyById(record, srcField).type;
                             isoSelete = items.fieldISO;
@@ -267,7 +267,6 @@ jQuery.noConflict();
                             fieldISO: langClick
                         }
                         fieldIdIso.push(fieldtranslated);
-
                     });
                 }
             });
@@ -278,19 +277,17 @@ jQuery.noConflict();
             return;
         };
 
-        async function activeButton(targetField,fieldLabel,oldButtonArray){
+        async function activeButton(targetField, fieldLabel, oldButtonArray) {
             let newButton = "";
             if (oldButtonArray.length == 0) {
                 newButton = $(`.${targetField} button:contains(${fieldLabel})`);
                 newButton.addClass('kuc-button-1-15-0__button kuc-button-1-15-0__button--submit');
-                console.log(newButton);
                 let oldField = {
                     old: fieldLabel
                 }
                 oldButtonArray.push(oldField);
             } else {
                 let lastButton = oldButtonArray.length - 1;
-                console.log(oldButtonArray[lastButton].old);
                 if (fieldLabel !== oldButtonArray[lastButton].old) {
                     let oldButton = $(`.${targetField} button:contains(${oldButtonArray[lastButton].old})`);
                     oldButton.removeClass('kuc-button-1-15-0__button kuc-button-1-15-0__button--submit');

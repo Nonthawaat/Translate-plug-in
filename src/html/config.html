@@ -1,16 +1,113 @@
 <section class="settings">
-  <h2 class="settings-heading">Settings for Translate-plug-in</h2>
-  <p class="kintoneplugin-desc">This message is displayed on the app page after the app has been updated.</p>
-  <form class="js-submit-settings">
-    <p class="kintoneplugin-row">
-      <label for="message">
-        Message:
-        <input type="text" class="js-text-message kintoneplugin-input-text">
-      </label>
-    </p>
-    <p class="kintoneplugin-row">
-        <button type="button" class="js-cancel-button kintoneplugin-button-dialog-cancel">Cancel</button>
-        <button class="kintoneplugin-button-dialog-ok">Save</button>
-    </p>
-  </form>
+  <table class="kintoneplugin-table">
+    <label>Language List</label>
+    <thead>
+      <tr>
+        <th class="kintoneplugin-table-th-blankspace"></th>
+        <th class="kintoneplugin-table-th"><span class="title">Language</span></th>
+        <th class="kintoneplugin-table-th"><span class="title">Language ISO</span></th>
+        <th class="kintoneplugin-table-th"><span class="title">Button Label</span></th>
+        <th class="kintoneplugin-table-th-blankspace"></th>
+      </tr>
+    </thead>
+    <tbody id="language-list-tbody">
+      <tr hidden>
+        <td><span class="drag-handle">&#9776;</span></td>
+        <td>
+          <div class="kintoneplugin-table-td-control">
+            <div class="kintoneplugin-table-td-control-value">
+              <div class="kintoneplugin-select" id="dropdown-select">
+                <select name="select_language_column" id="select_language_column" class="select_language_column">
+                  <option value="-----">-----</option>
+                </select>
+              </div>
+
+            </div>        
+        </td>
+        <td>
+          <div class="kintoneplugin-table-td-control">
+            <div class="kintoneplugin-table-td-control-value">
+              <div class="kintoneplugin-input-outer">
+                <input type="text" class="kintoneplugin-input-text language_iso" id="language_iso" readonly />
+              </div>
+            </div>
+          </div>
+        </td>
+        <td>
+          <div class="kintoneplugin-table-td-control">
+            <div class="kintoneplugin-table-td-control-value">
+              <div class="kintoneplugin-input-outer">
+                <input type="text" class="kintoneplugin-input-text button_label" id="button_label" />
+              </div>
+            </div>
+          </div>
+        </td>
+        <td class="kintoneplugin-table-td-operation operation-column"><br>
+          <button type="button" class="kintoneplugin-button-add-row-image addRowLanguageList" title="Add row"></button>
+          <button type="button" class="kintoneplugin-button-remove-row-image removeRow" title="Delete this row"></button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="kintoneplugin-row">
+    <button title="Reflection" type="button" class="js-reflection-button kintoneplugin-button-dialog-ok">Reflection
+      &nbsp;↓</button>
+  </div>
+  <div class="kintoneplugin-row">
+    <p>Default Language</p>
+    <div class="kintoneplugin-table-td-control" id="Default_Language">
+      <div class="kintoneplugin-table-td-control-value">
+        <div class="kintoneplugin-select" id="dropdown-select">
+          <select name="select_default_lang_column" id="select_default_lang_column" class="select_default_lang_column">
+            <option value="-----">-----</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </div>
+  <table class="kintoneplugin-table" id="fieldsListTable">
+    <label>Translate Fields</label>
+
+    <thead>
+      <tr>
+        <th class="kintoneplugin-table-th"><span class="title">ITEM<span class="kintoneplugin-require">*</span></span></th>
+        <th class="kintoneplugin-table-th"><span class="title">Fields placement for button</span></th>
+        <th class="kintoneplugin-table-th-blankspace"></th>
+      </tr>
+    </thead>
+    <tbody id="fields-list-tbody">
+      <tr hidden>
+        <td>
+          <div class="kintoneplugin-table-td-control">
+            <div class="kintoneplugin-table-td-control-value">
+              <div class="kintoneplugin-input-outer">
+                <input type="text" class="kintoneplugin-input-text ITEM_name" id="ITEM_name" />
+              </div>
+            </div>
+          </div>
+        </td>
+        <td>
+          <div class="kintoneplugin-table-td-control">
+            <div class="kintoneplugin-table-td-control-value">
+              <div class="kintoneplugin-select" id="dropdown-select">
+                <select name="select_field_column" id="select_field_column" class="select_field_column">
+                  <option value="-----">-----</option>
+                </select>
+              </div>
+
+            </div>
+        </td>
+        <td class="kintoneplugin-table-td-operation operation-column"><br>
+          <button type="button" class="kintoneplugin-button-add-row-image addRowTranslateField" title="Add row"></button>
+          <button type="button" class="kintoneplugin-button-remove-row-image removeRow" title="Delete this row"></button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="kintoneplugin-row">
+    <button title="cancel" type="button" class="js-cancel-button kintoneplugin-button-dialog-cancel">Cancel</button>
+    <button title="save" type="button" class="js-save-button kintoneplugin-button-dialog-ok">Save</button>
+  </div>
 </section>
